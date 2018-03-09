@@ -1,6 +1,6 @@
 # Simple Flask API for a Tensorflow Model
 
-To be run locally with vagrant and vmbox, read instructions for more information
+To be run locally with vagrant and vmbox, please refer to "readme.li" for more information
 
 To run locally,
 
