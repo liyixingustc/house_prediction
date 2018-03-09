@@ -2,7 +2,7 @@
 
 To be run locally with vagrant and vmbox, please refer to "readme.li" for more information
 
-To run locally
+To run locally,
 
 ```
 python app.py
