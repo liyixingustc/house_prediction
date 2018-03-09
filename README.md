@@ -1,8 +1,6 @@
 # Simple Flask API for a Tensorflow Model
 
-See the [blog post](https://guillaumegenthial.github.io/serving.html) covering the main steps.
-
-To be hosted on Heroku (files `Procfile`, `requirements.txt` and `runtime.txt`).
+To be run locally with vagrant and vmbox, read instructions for more information
 
 To run locally,
 
