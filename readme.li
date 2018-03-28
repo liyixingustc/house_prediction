@@ -3,6 +3,8 @@
 % If you mess things up and want to start from scratch, type "vagrant destroy"
 % Don't type "vagrant destroy" lightly! You have to start from SCRATCH again
 
+% to start with, install vagrant and vm virtualbox
+
 %%%% first time start
 % build the virtual machine. Wait a while for the first time
 % first go the directory where files are (you will notice a file named Vagrantfile)
