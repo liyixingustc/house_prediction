@@ -4,3 +4,4 @@ tensorflow
 flask
 gunicorn
 flask_cors
+pandas

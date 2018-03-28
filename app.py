@@ -1,9 +1,10 @@
 import os
 import sys
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, redirect
 from flask_cors import CORS
-
+from datetime import datetime
+import lr_model
 
 from serve import get_model_api
 
@@ -31,17 +32,39 @@ def api():
     All model-specific logic to be defined in the get_model_api()
     function
     """
+    #Read input
     input_data = request.json
     app.logger.info("api_input: " + str(input_data))
+    #Use model
     output_data = model_api(input_data)
+    #Parse output
     app.logger.info("api_output: " + str(output_data))
     response = jsonify(output_data)
     return response
 
-
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return "Index API"
+    if request.method == 'POST':
+        data = request.form
+        zipcode = data['param']
+        zipcode = int(zipcode[0:5])
+        zipcode = 30080
+        results = lr_model.lr_model(zipcode)
+        return render_template('index.html', lr_results = zipcode)
+    return render_template('index.html')
+
+
+@app.route("/api_lr", methods=['GET', 'POST'])
+def linear_regression_train():
+    if request.method == 'POST':
+        data = request.form
+        zipcode = data['param']
+        zipcode = int(zipcode[0:5])
+        zipcode = 30080
+        results = lr_model.lr_model(zipcode)
+        return render_template('index.html', lr_results = results)
+    return render_template('index.html')
+
 
 # HTTP Errors handlers
 @app.errorhandler(404)
@@ -61,7 +84,7 @@ def server_error(e):
 
 if __name__ == '__main__':
     # This is used when running locally.
-    app.run(host='0.0.0.0', 
+    app.run(host='0.0.0.0',
             port=8080,
             debug=True
             )
