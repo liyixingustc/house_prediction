@@ -31,7 +31,7 @@ mkvirtualenv house --python=/usr/bin/python3.6
 
 % virtual environment is created, your commandline should start with (house) right now
 % then install required package for virtual environment
-pip install scipy numpy tensorflow flask gunicorn flask_cors
+pip install scipy numpy tensorflow flask gunicorn flask_cors sklearn Flask-WTF
 cd /vagrant
 % start server
 python app.py

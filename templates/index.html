@@ -85,30 +85,21 @@
                 <div id="wideMap"></div>
                 <div id="panel"> 
                     <!-- INPUT form -->
-                    <form method="POST" action="/api_lr">
-                        <p class="h4 text-center mb-4">Inputs</p>
-
-                        <label for="no_beds" class="black-text">Number of Bed(s)</label>
-                        <input type="text" name="no_beds" class="form-control"> 
-                        <br>
-                        
-                        <label for="no_baths" class="black-text">Number of Bath(s)</label>
-                        <input type="text" name="no_baths" class="form-control"> 
-                        <br>
-
-                        <label for="area" class="black-text">Square Feet</label>
-                        <input type="text" name="area" class="form-control"> 
-                        <br>
-
-                                                <!-- "grey-text"  -->
-                        <label for="param" class="black-text">RESERVE PARAMETER(S)</label>
-                        <input type="text" name="param" class="form-control"> 
-                        <br>
-
-                        <!-- RUN Button -->
-                        <div class="text-center mt-4">
-                            <button class="btn btn-unique" id="button1" type="submit">Run Analysis</button>
+                    {% from "_field.html" import render_field %}
+                    <form method = "POST" action="/">
+                        {{ form.hidden_tag() }}
+                        <table>
+                            {{ render_field(form.zipcode) }}
+                            {{ render_field(form.numBed) }}
+                            {{ render_field(form.numBath) }}
+                        </table>
+                        {{ form.submit }}
+                        {% for message in get_flashed_messages() %}
+                        <div class="alert alert-warning">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            {{ message }}
                         </div>
+                        {% endfor %}
                     </form>
                 </div>
 
@@ -134,7 +125,7 @@
             <div id="outputs">
                 <h3> Results </h2>
                 <p id="results"> 
-                    {{ lr_results }}
+                    {{ ml_results }}
                 <p>
             </div>
 

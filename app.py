@@ -1,18 +1,27 @@
 import os
 import sys
 import logging
-from flask import Flask, request, jsonify, render_template, redirect
+from flask import Flask, request, jsonify, render_template, redirect, flash
 from flask_cors import CORS
 from datetime import datetime
-import lr_model
+from model import lr_model, multi_model
+from flask_wtf import Form
+from wtforms.fields import IntegerField, SubmitField
+from wtforms.validators import DataRequired
 
-from serve import get_model_api
-
+class MyForm(Form):
+    zipcode = IntegerField('zipcode', validators = [DataRequired()])
+    numBed = IntegerField('numBed')
+    numBath = IntegerField('numBath')
+    submit = SubmitField('Search my next home!')
 
 # define the app
 app = Flask(__name__)
 CORS(app) # needed for cross-domain requests, allow everything by default
-
+app.config.update(dict(
+    SECRET_KEY="secretkey",
+    WTF_CSRF_SECRET_KEY="csrfkey"
+))
 
 # logging for heroku
 if 'DYNO' in os.environ:
@@ -20,50 +29,19 @@ if 'DYNO' in os.environ:
     app.logger.setLevel(logging.INFO)
 
 
-# load the model
-model_api = get_model_api()
-
-
-# API route
-@app.route('/api', methods=['POST'])
-def api():
-    """API function
-
-    All model-specific logic to be defined in the get_model_api()
-    function
-    """
-    #Read input
-    input_data = request.json
-    app.logger.info("api_input: " + str(input_data))
-    #Use model
-    output_data = model_api(input_data)
-    #Parse output
-    app.logger.info("api_output: " + str(output_data))
-    response = jsonify(output_data)
-    return response
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
+    form = MyForm()
+    if request.method == 'POST' and form.validate():
         data = request.form
-        zipcode = data['param']
-        zipcode = int(zipcode[0:5])
-        zipcode = 30080
-        results = lr_model.lr_model(zipcode)
-        return render_template('index.html', lr_results = zipcode)
-    return render_template('index.html')
-
-
-@app.route("/api_lr", methods=['GET', 'POST'])
-def linear_regression_train():
-    if request.method == 'POST':
-        data = request.form
-        zipcode = data['param']
-        zipcode = int(zipcode[0:5])
-        zipcode = 30080
-        results = lr_model.lr_model(zipcode)
-        return render_template('index.html', lr_results = results)
-    return render_template('index.html')
+        zipcode = int(form.data['zipcode'])
+        if(zipcode < 10000 or zipcode > 99999):
+            return render_template('index.html')
+        results = multi_model.multi_model(zipcode)
+        return render_template('index.html', form = form, ml_results = results)
+    else:
+        flash("Wrong input!")
+    return render_template('index.html', form = form)
 
 
 # HTTP Errors handlers

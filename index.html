@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+
         <title>HOUSE PRICE PREDICTION</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,24 +85,24 @@
                 <div id="wideMap"></div>
                 <div id="panel"> 
                     <!-- INPUT form -->
-                    <form>
+                    <form method="POST" action="/">
                         <p class="h4 text-center mb-4">Inputs</p>
 
                         <label for="no_beds" class="black-text">Number of Bed(s)</label>
-                        <input type="text" id="no_beds" class="form-control"> 
+                        <input type="text" name="no_beds" class="form-control"> 
                         <br>
                         
                         <label for="no_baths" class="black-text">Number of Bath(s)</label>
-                        <input type="text" id="no_baths" class="form-control"> 
+                        <input type="text" name="no_baths" class="form-control"> 
                         <br>
 
                         <label for="area" class="black-text">Square Feet</label>
-                        <input type="text" id="area" class="form-control"> 
+                        <input type="text" name="area" class="form-control"> 
                         <br>
 
                                                 <!-- "grey-text"  -->
                         <label for="param" class="black-text">RESERVE PARAMETER(S)</label>
-                        <input type="text" id="param" class="form-control"> 
+                        <input type="text" name="param" class="form-control"> 
                         <br>
 
                         <!-- RUN Button -->
@@ -132,7 +133,9 @@
 
             <div id="outputs">
                 <h3> Results </h2>
-                <p id="results"> <p>
+                <p id="results"> 
+                    {{ ml_results }}
+                <p>
             </div>
 
                  
