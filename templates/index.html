@@ -89,9 +89,9 @@
                     <form method = "POST" action="/">
                         {{ form.hidden_tag() }}
                         <table>
-                            {{ render_field(form.zipcode) }}
-                            {{ render_field(form.numBed) }}
-                            {{ render_field(form.numBath) }}
+                           {{ render_field(form.zipcode) }}
+                           {{ render_field(form.numBed) }}
+                           {{ render_field(form.numBath) }}
                         </table>
                         {{ form.submit }}
                         {% for message in get_flashed_messages() %}

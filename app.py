@@ -7,10 +7,14 @@ from datetime import datetime
 from model import lr_model, multi_model
 from flask_wtf import Form
 from wtforms.fields import IntegerField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import validators, ValidationError
 
 class MyForm(Form):
-    zipcode = IntegerField('zipcode', validators = [DataRequired()])
+    zipcode = IntegerField('zipcode', [validators.DataRequired(), 
+                                       validators.NumberRange(
+                                           min = 10000, 
+                                           max = 99999
+                                       )])
     numBed = IntegerField('numBed')
     numBath = IntegerField('numBath')
     submit = SubmitField('Search my next home!')
@@ -35,12 +39,8 @@ def index():
     if request.method == 'POST' and form.validate():
         data = request.form
         zipcode = int(form.data['zipcode'])
-        if(zipcode < 10000 or zipcode > 99999):
-            return render_template('index.html')
         results = multi_model.multi_model(zipcode)
         return render_template('index.html', form = form, ml_results = results)
-    else:
-        flash("Wrong input!")
     return render_template('index.html', form = form)
 
 
