@@ -155,13 +155,18 @@ if __name__=="__main__":
 	args = argparser.parse_args()
 	zipcode = args.zipcode
 	sort = args.sort
-	print ("Fetching data for %s"%(zipcode))
-	scraped_data = parse(zipcode,sort)
-	print ("Writing data to output file")
-	with open("properties-%s.csv"%(zipcode),'wb')as csvfile:
-		fieldnames = ['title','address','latitude','longitude','city','state','postal_code','price','facts and features','real estate provider','url']
-		writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-		writer.writeheader()
-		for row in  scraped_data:
-			writer.writerow(row)
+	for zipciode in range(30002,30010):
+		print ("Fetching data for")
+		scraped_data = parse(zipcode,sort)
+		print ("Writing data to output file")
+		with open("properties-%s.csv"%(zipcode),'wb')as csvfile:
+			for zipciode in range(30002,30010):
+				print ("Fetching data for %s"%(zipcode))
+				scraped_data = parse(zipcode,sort)
+				print ("Writing data to output file")
+				fieldnames = ['title','zipcode','address','latitude','longitude','city','state','postal_code','price','facts and features','real estate provider','url']
+				writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+				writer.writeheader()
+				for row in  scraped_data:
+					writer.writerow(row)
 
