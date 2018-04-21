@@ -56,11 +56,11 @@ def hist():
             i = 0
             for row in csvReader:
                 if row[8] == str(bed_no) and row[9] == str(bath_no):
-                    inputrows.append([i, row[6]])
+                    inputrows.append([i, row[6]], row[1], row[2])
                     i = i + 1
                 
         inputrows = inputrows[1:]
-        inputstring = ["No", "price"]
+        inputstring = ["No", "price", "latitude", "longitude"]
 
         with open('data/bbrange.csv', 'w') as csvfile:
             csvWriter = csv.writer(csvfile)
@@ -69,8 +69,8 @@ def hist():
                 temp = row
                 csvWriter.writerow(temp)
 
-        return render_template('index.html', flag = 1)
-    return render_template('index.html', flag = 0)
+        return render_template('index_tmp.html', flag = 1)
+    return render_template('index_tmp.html', flag = 0)
 
 # HTTP Errors handlers
 @app.errorhandler(404)
