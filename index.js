@@ -21,6 +21,7 @@ var x;
 var y;
 var colors;
 var handle;
+var dataset;
 // Read data from csv file
 var xx;
 d3.csv("test1.csv", prepare, function(data) {
@@ -31,35 +32,14 @@ colors = d3.scaleQuantize()
 	   		 .domain([0, d3.max(data, function(d) {return d.price;})])
 	   		 .range(['#ffc388','#ffa15e','#fd8f5b','#f26c58','#e95b56','#e04b51','#d53a4b', '#bb1d36','#ac0f29', '#8b0000', '#b30000', '#7f0000']);
 
-// colors = d3.scaleQuantize()
-// 			   		 .domain([0, 10000000, 1000000, 2000000, 3000000, 4000000, 5000000, 6000000, 7000000, 8000000, 9000000, 10000000])
-// 			   		 .range(['#ffc388', '#ffb269', '#ffa15e','#fd8f5b','#f26c58','#e95b56','#e04b51','#d53a4b', '#bb1d36','#ac0f29', '#8b0000'])
-
 var aa = 12
-// x scale for price --------------> ?? linear/ quantile ??
-// x = d3.scaleQuantize()
-// 	  .domain([d3.min(data, function(d) {return d.price;}), d3.max(data, function(d) {return d.price;})])
-// 	  .range([0, width/aa, 2*width/aa, 3*width/aa, 4*width/aa, 5*width/aa, 6*width/aa, 7*width/aa, 8*width/aa, 9*width/aa, 10*width/aa, 11*width/aa]);
-// // 		  .clamp(true);
-
-
-// x = d3.scaleLinear()
-// 	  .domain([d3.min(data, function(d) {return d.price;}), d3.max(data, function(d) {return d.price;})])
-// 	  .range([0, width])
-// 	  .clamp(true);
-
 
 x = d3.scaleLinear()
 	  .domain([0, d3.max(data, function(d) {return d.price;})])
 	  .range([0, width])
 	  .clamp(true);
 
-
 xx = x
-// x = d3.scaleQuantize()
-//    		 .domain([0, 10000000, 1000000, 2000000, 3000000, 4000000, 5000000, 6000000, 7000000, 8000000, 9000000, 10000000])
-//    		 .range([width/11, 2*width/11, 3*width/11, 4*width/11, 5*width/11, 6*width/11, 7*width/11, 8*width/11, 9*width/11, 10*width/11, width]);
-
 
 // y scale for histogram
 y = d3.scaleLinear()
@@ -90,12 +70,6 @@ var hist = svg.append("g")
 			  .attr("class", "histogram")
 			  .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-
-////  Plot Set Up  ////
-
-var dateset;
-
-//// Data Binding  ////
 
 // group data for bars
 var bins = histogram(data);
@@ -132,10 +106,6 @@ bar.append("text")
    .text(function(d) {if (d.length > 5) return d.length;})
    .style("fill", "white");
 
-dataset = data;
-drawPlot(dataset);
-
-
 
 /////////   Slider   //////////
 var currentValue = 0;
@@ -144,51 +114,49 @@ var slider = svg.append("g")
 				.attr("class", "slider")
 				.attr("transform", "translate(" + margin.left + "," + (margin.top + histHeight + 55) + ")");
 
-slider.append("line")
-	  .attr("class", "track")
-	  .attr("x1", x.range()[0])
-	  .attr("x2", x.range()[1])
-	  .select(function() {return this.parentNode.appendChild(this.cloneNode(true));})
-	  .attr("class", "track-inset")
-	  .select(function() {return this.parentNode.appendChild(this.cloneNode(true));})
-	  .attr("class", "track-overlay")
-	  .call(d3.drag()
-	  	.on("start.interrupt", function() {slider.interrupt();})
-	  	.on("start drag", function() {   // ???????????  .drag   ???????????
-	  		currentValue = d3.event.x;
-	  		// console.log(currentValue);
-	  		update(x.invert(currentValue));
-	  	}));
+dataset = data;
+drawPlot(dataset);
 
-slider.insert("g", ".track-overlay")
+const brush = d3.brushX()
+			  .extent([[0, 0], [width, 40]])
+			  .on("brush", brushed);
+
+slider.append("rect")
+	  .attr("class", "drag-bar")
+	  .attr("x", 0)
+	  .attr("y", 0)
+	  .attr("width", width)
+	  .attr("height", 10)
+	  .attr("fill", "#dcdcdc")
+	  .attr("rx", 4)
+	  .attr("ry", 4);
+
+slider.append("g", ".track-overlay")
 	  .attr("class", "ticks")
-	  .attr("transform", "translate(0," + 18 + ")")
+	  .attr("transform", "translate(0, 18)")
 	  .selectAll("text")
-	  .data(x.ticks(nn))   //  ?????????????????
+	  .data(x.ticks(nn))
 	  // .data(bins)
 	  .enter()
 	  .append("text")
 	  .attr("x", x)
-	  // .attr("y", 10)
+	  .attr("y", 10)
 	  .attr("text-anchor", "middle")
-	  .text(function(d) {console.log(d); return d;})
-	  // .text(function(d) {return d.price;});    //   ???????????
+	  .text(function(d) {return d;});
 
-handle = slider.insert("circle", ".track-overlay")
-				   .attr("class", "handle")
-				   .attr("r", 9);
 
-////////////////////////////////////////
-
+slider.append("g")
+	  .attr("class", "brush")
+	  .call(brush)
+	  .call(brush.move, x.range());
 })
-
 
 
 function drawPlot(data) {
 	var locations = plot.selectAll(".location")
 					    .data(data, function(d) { return d.id;});
 
-
+	locations.exit().remove();
 	// if filtered dataset has more circles than already existing, 
 	// transition new ones in
 	locations.enter()
@@ -225,26 +193,32 @@ function prepare(d) {
 	return d;
 }
 
+function brushed() {
+	const position = d3.event.selection;
+	const min = position[0];
+	const max = position[1];
+	update(min, max);
+}
 
-function update(h) {
-	handle.attr("cx", x(h));
+function update(min, max) {
+	const valMin = x.invert(min);
+	const valMax = x.invert(max);
 
-	// filter data set and redraw plot
-	var newData = dataset.filter(function(d) {
-		return d.price < h;
-	})
+	const newData = dataset.filter(function(d) {
+		return d.price < valMax && d.price > valMin;
+	});
+
 	drawPlot(newData);
 
-	// histogram bar colors
 	d3.selectAll(".bar")
-	  .attr("fill", function(d) {
-	  	if (d.x0 < h) {
-	  		return colors(d.x0);
-	  	} else {
-	  		return "#eaeaea";
-	  	}
-	  })
+	  .attr("fill", function(d) {return (d.x0 < valMax && d.x1 > valMin) ? colors(d.x0) : "#eaeaea"});
 }
+
+
+
+
+
+
 
 
 
