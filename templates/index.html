@@ -120,6 +120,7 @@
                         {{ form.hidden_tag() }}
                         <table>
                            {{ render_field(form.zipcode) }}
+                           {{ render_field(form.sqft)}}
                            {{ render_field(form.numBed) }}
                            {{ render_field(form.numBath) }}
                         </table>
@@ -187,10 +188,10 @@
 			            <li class="nav-item">
 			                <a class="nav-link active" href="#">Results</a>
 			            </li>
+                        <!-- 
 			            <li class="nav-item">
 			                <a class="nav-link" href="#">Visualization</a>
 			            </li>
-			            <!-- 
 			            <li class="nav-item">
 			                <a class="nav-link disabled" href="#">Disabled</a>
 			            </li> 
@@ -204,7 +205,12 @@
 			        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> 
 			        -->
 			        <p id="results"> 
-                    	{{ ml_results }}
+                        {{ ml_results }} <br/>
+                        {{ distance }}
+                        <!-- 
+                    	Price prediction: ${{ ml_results }} <br/>
+                        Distance to nearest mall: {{ distance }} km
+                        -->
                     <p>
 			        <a href="#" class="btn btn-primary">Details</a>
 			    </div>
