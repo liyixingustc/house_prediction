@@ -2,6 +2,8 @@ var markers = [];
 var coordinates = [];
 var radii = [];
 var jsonData = [];
+mUpdate = function(x){};
+dataMarkers = [];
 
 $(function () {
 
@@ -13,12 +15,12 @@ $(function () {
         var mapCanvas = document.getElementById('wideMap');
         var mapOptions = {
             center: location,
-            zoom: 12,
+            zoom: 11,
             //panControl: false,
             scrollwheel: false,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         }
-        var map = new google.maps.Map(mapCanvas, mapOptions);
+        map = new google.maps.Map(mapCanvas, mapOptions);
 
         // var markerImage = '../img/png/marker.png';
         // var markerImage = 'marker.png';
@@ -70,6 +72,7 @@ $(function () {
         });
 
         function placeMarker(location) {
+            // console.log(location)
             var marker = new google.maps.Marker({
                 position: location, 
                 map: map   
@@ -84,14 +87,43 @@ $(function () {
                 tmp.setMap(null);
                 tmp=coordinates.pop();
             }
-            markers.push(marker);
+            markers.push(marker);   
         }
-
-        // var styles = [{"featureType": "landscape", "stylers": [{"saturation": -100}, {"lightness": 65}, {"visibility": "on"}]}, {"featureType": "poi", "stylers": [{"saturation": -100}, {"lightness": 51}, {"visibility": "simplified"}]}, {"featureType": "road.highway", "stylers": [{"saturation": -100}, {"visibility": "simplified"}]}, {"featureType": "road.arterial", "stylers": [{"saturation": -100}, {"lightness": 30}, {"visibility": "on"}]}, {"featureType": "road.local", "stylers": [{"saturation": -100}, {"lightness": 40}, {"visibility": "on"}]}, {"featureType": "transit", "stylers": [{"saturation": -100}, {"visibility": "simplified"}]}, {"featureType": "administrative.province", "stylers": [{"visibility": "off"}]}, {"featureType": "water", "elementType": "labels", "stylers": [{"visibility": "on"}, {"lightness": -25}, {"saturation": -100}]}, {"featureType": "water", "elementType": "geometry", "stylers": [{"hue": "#ffff00"}, {"lightness": -25}, {"saturation": -97}]}];
-        // map.set('styles', styles);
     }
 
     google.maps.event.addDomListener(window, 'load', initMap);
+
+    // Displaying all nodes
+    mUpdate = function showMarkers(nodes){
+        console.log("# of nodes = "+nodes.length)
+        // console.log("dataMarkers RESET  --> Current length = "+dataMarkers.length)
+        for (var i=0; i<dataMarkers.length; i++){
+            dataMarkers[i].setMap(null);
+        }
+        dataMarkers=[];
+        for (var i=0; i<nodes.length; i++){
+            
+            // pos = new google.maps.LatLng(1.0*nodes[0][0], 1.0*nodes[0][1])
+            var pos = {lat: nodes[i][0], lng: nodes[i][1]};
+            // console.log(pos)
+
+            var marker = new google.maps.Marker({
+                // position: new google.maps.LatLng(nodes[0][0], nodes[0][1]),
+                position: pos,
+                animation: google.maps.Animation.DROP,
+                map: map,
+                title: ''
+
+
+            });
+            dataMarkers.push(marker);
+            // marker.setMap(map);
+        }
+        // console.log("Now Length = "+dataMarkers.length)
+        for (var i=0; i<dataMarkers.length; i++){
+            dataMarkers[i].setMap(map);
+        }
+    }
 
     // AJAX Commnications
     $('#button1').click(function(){
@@ -137,7 +169,6 @@ $(function () {
 });
 
 
-
 function addMarker(location){
     var marker = new google.maps.Marker({
     position: location,
@@ -146,3 +177,31 @@ function addMarker(location){
     markers.push(marker);
 }
 
+
+//-------------- Some test functions ---------------//
+function updateMarkers(nodes){
+    mUpdate(nodes);
+}
+
+
+function testMe1(nodes){
+    console.log('Length = '+nodes.length)
+    console.log(nodes);
+    
+    for (var i = 0; i<=nodes.length; i++){
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(nodes[0][0], nodes[0][1]),
+            map: map,
+            title: 'info'
+        });
+    }
+}
+
+function testMe(x){
+    console.log("Test-A");
+    console.log(x);
+}
+
+function testMe2(){
+    console.log("Test-B");
+}

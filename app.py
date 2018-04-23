@@ -10,6 +10,7 @@ from wtforms.fields import IntegerField, SubmitField
 from wtforms import validators, ValidationError
 import csv
 import numpy as np
+from flask import send_file
 
 class MyForm(Form):
     zipcode = IntegerField('zipcode', [validators.DataRequired(), 
@@ -42,35 +43,34 @@ def index():
         data = request.form
         zipcode = int(form.data['zipcode'])
         results = multi_model.multi_model(zipcode)
-        return render_template('index_tmp.html', form = form, ml_results = results)
-    return render_template('index_tmp.html', form = form)
-
-@app.route('/hist', methods=['GET', 'POST'])
-def hist():
-    if request.method == 'POST':
-        bedno = request.method['bedno']
-        bathno = request.method['bathno']
+        print (results)
+        bedno   = int(form.data['numBed'])
+        bathno  = int(form.data['numBath'])
         inputrows = []
         with open('data/properties_0419.csv', 'r') as csvfile:
             csvReader = csv.reader(csvfile)
             i = 0
             for row in csvReader:
-                if row[8] == str(bed_no) and row[9] == str(bath_no):
-                    inputrows.append([i, row[6]], row[1], row[2])
-                    i = i + 1
-                
-        inputrows = inputrows[1:]
-        inputstring = ["No", "price", "latitude", "longitude"]
-
-        with open('data/bbrange.csv', 'w') as csvfile:
+            	i = i + 1
+            	if row[8] == str(bedno) and row[9] == str(bathno):
+                    inputrows.append([i, float(row[6]), float(row[1]), float(row[2])])
+                    
+        print(len(inputrows))
+        '''
+        inputstring = ["id", "price", "latitude", "longitude"]
+        with open('price_range.csv', 'w') as csvfile:
             csvWriter = csv.writer(csvfile)
             csvWriter.writerow(inputstring)
             for row in inputrows:
                 temp = row
                 csvWriter.writerow(temp)
+        '''
 
-        return render_template('index_tmp.html', flag = 1)
-    return render_template('index_tmp.html', flag = 0)
+
+        return render_template('index.html', form = form, ml_results = results, info = inputrows, fcn1 = "visualData(pRange)")
+    return render_template('index.html', form = form)
+
+
 
 # HTTP Errors handlers
 @app.errorhandler(404)
